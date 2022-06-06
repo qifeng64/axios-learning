@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="./css/bootstrap-v4.6.0.css" />
+    <link rel="stylesheet" href="./css/login.css" />
+  </head>
+  <body>
+    <div class="login-box">
+      <div class="form-group">
+        <label for="username">用户名</label>
+        <!-- 账号 -->
+        <input
+          type="text"
+          class="form-control"
+          id="username"
+          autocomplete="off"
+        />
+        <small id="emailHelp" class="form-text text-muted"
+          >默认用户名为:
+          <strong>admin</strong>
+        </small>
+      </div>
+      <div class="form-group">
+        <!-- 密码 -->
+        <label for="password">密码</label>
+        <input type="text" class="form-control" id="password" />
+        <small id="emailHelp" class="form-text text-muted"
+          >默认密码为
+          <strong>123456</strong>
+        </small>
+      </div>
+      <button type="submit" class="btn btn-primary" id="btnLogin">登录</button>
+    </div>
+
+    <script>
+      /* 思路分析:交互
+      1.点击登录按钮
+        1.1 获取输入框文本
+        1.2 非空判断  (减少服务器无效请求次数)
+        1.3 发送ajax请求  (key=value&key1=value1)
+        1.4 服务器响应之后
+          200 : 登录成功
+          不是200 ： 登录失败
+	  */
+      //  1.点击登录按钮
+      document
+        .querySelector("#btnLogin")
+        .addEventListener("click", function () {
+          //    1.1 获取输入框文本
+          let username = document.querySelector("#username").value;
+          let password = document.querySelector("#password").value;
+          //   1.2 非空判断  (减少服务器无效请求次数)
+          if (username == "" || password == "") {
+            alert("请输入用户名和密码");
+            return; // 一定要终止函数
+          }
+          //   1.3 发送ajax请求  (key=value&key1=value1)
+          //   (1)创建xhr
+          let xhr = new XMLHttpRequest();
+          //   (2)设置方法和地址
+          xhr.open("post", "http://www.liulongbin.top:3009/api/login");
+          //   (3)设置请求头： post需要
+          xhr.setRequestHeader(
+            "content-type",
+            "application/x-www-form-urlencoded"
+          );
+          //   (4)发送请求
+          xhr.send(`username=${username}&&password=${password}`);
+          //   (5)响应事
+          xhr.onload = function () {
+            console.log(xhr.responseText);
+            //   服务器响应返回的json转成js
+            let res = JSON.parse(xhr.responseText);
+            if (res.code == 200) {
+              alert("登录成功");
+            } else {
+              alert(res.msg);
+            }
+          };
+        });
+    </script>
+  </body>
+</html>

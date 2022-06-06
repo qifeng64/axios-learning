@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      /* 
+        （1）post在发送请求之前需要设置请求头固定格式，强烈建议CV
+              xhr.setRequestHeader('Content-type','application/x-www-form-urlencoded') 
+        （2）post参数要在send中发送
+              xhr.send('key=value')
+        */
+      let xhr = new XMLHttpRequest();
+      xhr.open("post", "https://autumnfish.cn/api/user/register");
+      // 设置请求头 content-type可小写
+      xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+      xhr.send("username=adan");
+      xhr.onload = function () {
+        console.log(xhr.responseText);
+      };
+    </script>
+  </body>
+</html>

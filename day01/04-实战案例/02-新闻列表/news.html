@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <!-- 导入样式表 -->
+    <link rel="stylesheet" href="./css/news.css" />
+  </head>
+  <body>
+    <!-- 新闻列表 -->
+    <div id="news-list">
+      <!-- 新闻的 item 项 -->
+      <div class="news-item">
+        <img class="thumb" src="" alt="" />
+        <div class="right-box">
+          <!-- 新闻标题 -->
+          <h1 class="title">5G商用在即，三大运营商营收持续下降</h1>
+          <div class="footer">
+            <div>
+              <!-- 新闻来源 -->
+              <span>胡润百富</span>&nbsp;&nbsp;
+              <!-- 发布日期 -->
+              <span>2019-10-28 10:14:38</span>
+            </div>
+            <!-- 评论数量 -->
+            <span>评论数：66</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      /* 思路分析
+        1.请求数据(页面一加载，立刻获取数据，不需要事件的触发)
+        2.渲染页面
+            DOM驱动
+            数据驱动
+      */
+      // 1 创建xhr对象
+      let xhr = new XMLHttpRequest();
+      // 2 设置请求方法和地址
+      xhr.open("get", "http://www.liulongbin.top:3009/api/news");
+      // 3 发送请求
+      xhr.send();
+      // 5 注册响应事件
+      xhr.onload = function () {
+        // 不要省略，查看服务器返回对象
+        console.log(xhr.responseText);
+        // 将服务器返回的JSON转换成JS
+        let res = JSON.parse(xhr.responseText);
+        // console.log(res);
+        // 渲染数据 将处理方式封装成函数
+        renderData(res.data);
+      };
+
+      renderData = (arr) => {
+        // console.log(arr.map());
+        // arr.map()将js对象转换成html对象 .join('')去掉数组拼接之后的逗号
+        // arr.map(item=>``) 模板字符串省略return直接返回映射之后的HTML字符串
+        // innerHTML 数据驱动
+        document.querySelector("#news-list").innerHTML = arr
+          .map(
+            (item) => `
+        <div class="news-item">
+        <img class="thumb" src="http://www.liulongbin.top:3009${item.img}" alt="" />
+        <div class="right-box">
+          <!-- 新闻标题 -->
+          <h1 class="title">${item.title}</h1>
+          <div class="footer">
+            <div>
+              <!-- 新闻来源 -->
+              <span>${item.source}</span>&nbsp;&nbsp;
+              <!-- 发布日期 -->
+              <span>${item.time}</span>
+            </div>
+            <!-- 评论数量 -->
+            <span>评论数: ${item.cmtcount}</span>
+          </div>
+        </div>
+      </div>
+      `
+          )
+          .join("");
+      };
+    </script>
+  </body>
+</html>

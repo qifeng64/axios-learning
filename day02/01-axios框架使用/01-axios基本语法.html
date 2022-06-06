@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+  </head>
+
+  <body>
+    <button class="btn1">基本使用</button>
+    <button class="btn2">点我发送get请求</button>
+    <button class="btn3">点我发送post请求</button>
+
+    <!-- 导入axios -->
+    <script src="./axios.js"></script>
+    <script>
+      /*
+      1.axios基本使用
+        axios.get('url')
+            .then( res=>{ //请求成功 } )
+            .catch( err=>{ //请求失败 } )  ==>  物理错误，例如网络...,不包含业务逻辑方面的错误
+            .then( ()=>{ //请求完成. 无论成功还是失败 })
+
+      2. axios发送get请求
+        axios.get('url', { params:{key:value} } )
+            .then(res=>{ //请求完成} )
+
+      3. axios发送post请求
+        axios.post('url',{ key:value })
+            .then(res=>{ //请求完成} )
+      */
+
+      // 基本使用
+      document.querySelector(".btn1").addEventListener("click", function () {
+        // .then()底层为onload事件
+        axios
+          .get("https://autumnfish.cn/api/joke/list?num=10")
+          .then((res) => {
+            // (1)res里面存储很多数据: 服务器响应数据、请求头、请求配置、请求xhr对象
+            console.log(res);
+            // (2)res.data : 才是服务器响应的数据，相当于xhr.responseText
+            console.log(res.data); // 已自动将 JSON => JS
+          })
+          .catch((err) => {
+            // 捕捉异常 请求错误
+            console.log(err);
+          })
+          .then(() => {
+            //请求完成 : 无论成功还是失败，请求完成就会执行  用的很少，了解即可
+            console.log("请求完成");
+          });
+      });
+      // 点我发送get请求
+      document.querySelector(".btn2").addEventListener("click", function () {
+        axios
+          // .get("https://autumnfish.cn/api/joke/list?num=10")
+          .get("https://autumnfish.cn/api/joke/list", {
+            params: { num: 10 }, // 不如直接在URL上拼
+          })
+          .then(({ data }) => {
+            // 解构赋值可用于函数的参数赋值
+            // let {data} = res  // 解构赋值
+            console.log(data);
+          });
+      });
+      // 点我发送post请求
+      document.querySelector(".btn3").addEventListener("click", function () {
+        axios
+          .post("http://www.liulongbin.top:3009/api/login", {
+            username: "11313",
+            password: "asddsad",
+          })
+          .then(({ data }) => {
+            console.log(data);
+          });
+      });
+    </script>
+  </body>
+</html>

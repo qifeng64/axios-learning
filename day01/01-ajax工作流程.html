@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      /* 
+      1. ajax 技术: 可以在页面不刷新的情况下 向服务器请求数据
+
+      2. XMLHttpRequest对象 : 负责实现ajax技术的对象 
+        （1）创建XMLHttpRequest对象               =>   下单
+                let xhr = new XMLHttpRequest()    
+        （2）设置请求方法和地址                    =>   填写配送方式和地址
+                xhr.open('get/post','http://....')    
+        （3）发送请求                             =>   确认付款提交
+                xhr.send()            
+        （4）注册响应事件                         => 等待送达
+                xhr.onload = function(){}  
+      */
+
+      //(1)创建xhr对象(小黄人对象) => 下单
+      let xhr = new XMLHttpRequest();
+      //(2)设置请求方法和地址
+      xhr.open("get", "https://autumnfish.cn/api/joke");
+      //(3)发送请求
+      xhr.send();
+      //(4)注册响应完成事件
+      /* 这个事件不会立即执行，而是等服务器 响应之后 才会执行
+        时间不固定 : 取决于 带宽、请求大小、天气、高峰期等等因素
+         */
+      xhr.onload = function () {
+        // 获取服务器响应数据 => 只有响应后才能拿到数据 xhr.responseText;
+        console.log(xhr.responseText);
+      };
+    </script>
+  </body>
+</html>

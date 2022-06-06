@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+    <link rel="stylesheet" href="./css/index.css" />
+  </head>
+
+  <body>
+    <img src="./img/header.png" alt="" class="header" />
+    <div class="cq-wrap">
+      <!-- 导航 -->
+      <div class="nav">
+        <ul>
+          <li class="active">
+            <img src="./img/sword.png" alt="" /><span>剑士</span>
+          </li>
+          <li><img src="./img/knight.png" alt="" /> <span>骑士</span></li>
+          <li><img src="./img/Archer.png" alt="" /> <span>弓手</span></li>
+          <li><img src="./img/hunter.png" alt="" /> <span>猎人</span></li>
+          <li><img src="./img/magic.png" alt="" /> <span>法师</span></li>
+          <li><img src="./img/flamen.png" alt="" /> <span>祭司</span></li>
+        </ul>
+      </div>
+      <!-- table -->
+      <table class="cq-list">
+        <thead>
+          <th>勇士</th>
+          <th>技能</th>
+          <th>武器</th>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <img
+                class="icon"
+                src="http://p6.qhimg.com/dr/72__/t01b8063ea608652431.png"
+                alt=""
+              />
+              <span> 涅斯军长官尤莉娅 </span>
+            </td>
+            <td>
+              <img
+                class="skill"
+                src="http://p9.qhimg.com/dr/52__/t01087d8e61575ab25d.png"
+                alt=""
+              />
+              注射!
+            </td>
+            <td>
+              <img
+                class="weapon"
+                src="http://p6.qhimg.com/dr/45__/t0178ac936dcb72650f.png"
+                alt=""
+              />
+              疫苗-G
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <!-- 遮罩层 -->
+    <div class="cover" style="display: none">
+      <img class="loading" src="./img/loading02.gif" alt="" />
+    </div>
+
+    <!-- 导入axios -->
+    <script src="./lib/axios.js"></script>
+
+    <script>
+      /*思路分析
+      1.点击tab栏
+        1.0 排他思想修改tab栏样式
+        1.1 获取当前点击的type
+        1.2 发送ajax请求
+        1.3 服务器响应之后，渲染数据
+
+      2.页面一加载，默认请求第一个tab栏数据
+        * 解决方案： 模拟第一个tab栏点击事件 => 事件触发
+
+      3.网络加载loading效果
+        loading原理: gif动图
+        加载loading : 发送ajax之前
+        消失loading : 服务器响应之后
+      */
+
+      //1.点击tab栏 (遍历数组注册事件)
+      // 拿到所有的 li  遍历伪数组
+      document.querySelectorAll(".nav li").forEach((item) => {
+        // 给数组元素注册点击事件
+        item.addEventListener("click", function () {
+          // 1.0 排他思想修改tab栏样式  classList 添加、移除及切换CSS类
+          document.querySelector(".active").classList.remove("active");
+          this.classList.add("active");
+          // 1.1 获取当前点击的type  li > img + span
+          // innerText设置或获取标签包含的文本信息（不包含标签）
+          const type = this.children[1].innerText;
+          // 1.2 ajax发送请求
+          // 请求发送前 加载loading
+          document.querySelector(".cover").style.display = "block";
+          axios({
+            method: "get",
+            url: "https://autumnfish.cn/api/cq/category",
+            params: { type }, // get参数
+          }).then((res) => {
+            // console.log(res);
+            // 调用函数 渲染页面
+            renderData(res.data.data.heros);
+            // 消失loading
+            document.querySelector(".cover").style.display = "none";
+          });
+        });
+      });
+
+      // 定义渲染函数
+      const renderData = (arr) => {
+        document.querySelector("tbody").innerHTML = arr
+          .map(
+            (item) => `
+            <tr>
+              <td>
+                <img
+                  class="icon"
+                  src="${item.heroIcon}"
+                  alt=""
+                />
+                <span>${item.heroName}</span>
+              </td>
+              <td>
+                <img
+                  class="skill"
+                  src="${item.skillIcon}"
+                  alt=""
+                />
+                ${item.skillName}
+              </td>
+              <td>
+                <img
+                  class="weapon"
+                  src="${item.weaponIcon}"
+                  alt=""
+                />
+                ${item.weaponName}
+              </td>
+            </tr>
+          `
+          )
+          .join("");
+      };
+
+      // 2.页面一加载，默认请求第一个tab栏数据=>querySelector(querySelectorAll是所有)
+      // 元素.click模拟鼠标点击
+      document.querySelector(".nav li").click();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      * {
+        padding: 0;
+        margin: 0;
+      }
+
+      .menu p {
+        width: 100px;
+        border: 3px solid;
+        margin: 5px;
+      }
+
+      .menu > div p {
+        margin-left: 10px;
+        border-color: red;
+      }
+
+      .menu > div > div p {
+        margin-left: 20px;
+        border-color: green;
+      }
+
+      .menu > div > div > div p {
+        margin-left: 30px;
+        border-color: yellow;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="menu">
+      <!-- <div>
+        <p>第一级菜单</p>
+        <div>
+          <p>第二级菜单</p>
+          <div>
+            <p>第三级菜单</p>
+          </div>
+        </div>
+      </div> -->
+    </div>
+
+    <script>
+      //服务器返回一个不确定的数据结构,涉及到多重数组嵌套
+      let arr = [
+        {
+          type: "电子产品",
+          data: [
+            {
+              type: "手机",
+              data: ["iPhone手机", "小米手机", "华为手机"],
+            },
+            {
+              type: "平板",
+              data: ["iPad", "平板小米", "平板华为"],
+            },
+            {
+              type: "智能手表",
+              data: [],
+            },
+          ],
+        },
+        {
+          type: "生活家居",
+          data: [
+            {
+              type: "沙发",
+              data: ["真皮沙发", "布沙发"],
+            },
+            {
+              type: "椅子",
+              data: ["餐椅", "电脑椅", "办公椅", "休闲椅"],
+            },
+            {
+              type: "桌子",
+              data: ["办公桌"],
+            },
+          ],
+        },
+        {
+          type: "零食",
+          data: [
+            {
+              type: "水果",
+              data: [],
+            },
+            {
+              type: "咖啡",
+              data: ["雀巢咖啡"],
+            },
+          ],
+        },
+      ];
+
+      // 递归：在函数内部调用自己
+      // 封装一个函数添加DOM arr 渲染哪个数组 father 渲染到页面的哪个盒子上
+      function addElement(arr, father) {
+        // 遍历数组
+        for (let i = 0; i < arr.length; i++) {
+          //   father.innerHTML +=
+          // 创建div
+          let div = document.createElement("div");
+          // 设置内容  ||  由于第三层菜单没有type属性，没有则返回元素本身
+          div.innerHTML = `<p>${arr[i].type || arr[i]}</p>`;
+          // 添加到父元素
+          father.appendChild(div);
+          // 如果 arr[i] 有data属性 => 有下级菜单
+          if (arr[i].data) {
+            //   arr[i].data为下层菜单数组 div父盒子
+            addElement(arr[i].data, div);
+          }
+        }
+      }
+      // 调用函数   第一层 => 将要渲染的数组 渲染容器
+      addElement(arr, document.querySelector(".menu"));
+    </script>
+  </body>
+</html>

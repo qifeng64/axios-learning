@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="./lib/bootstrap-v4.6.0.css" />
+    <style>
+      body {
+        padding: 20px;
+      }
+
+      .loading-box {
+        position: fixed;
+        top: 30%;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+        box-shadow: 1px 1px 3px #efefef;
+        display: none;
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- 按钮 -->
+    <button class="btn btn-primary" id="btn1">请求1</button>
+    <button class="btn btn-info" id="btn2">请求2</button>
+    <button class="btn btn-warning" id="btn3">请求3</button>
+
+    <!-- loading 区域 -->
+    <div class="loading-box">
+      <div class="spinner-border m-5 text-primary" role="status">
+        <span class="sr-only">Loading...</span>
+      </div>
+    </div>
+
+    <script src="./lib/axios.js"></script>
+
+    <script>
+      /* 1. axios拦截器 : 拦截 请求 和 响应 的 
+         2. axios拦截器工作流程 : 
+          (1)axios()发送请求 
+          (2)执行请求拦截 return config 
+          (3)请求发给服务器,服务器处理请求
+          (4)服务器响应数据 
+          (5)执行响应拦截 return response 
+          (5)执行axios.then()回调 
+    */
+
+      // axios拦截器
+
+      // 添加请求拦截器
+      axios.interceptors.request.use(
+        function (config) {
+          // 在发送请求之前做些什么
+          // 加载loading
+          document.querySelector(".loading-box").style.display = "block";
+          return config;
+        },
+        function (error) {
+          // 对请求错误做些什么
+          return Promise.reject(error);
+        }
+      );
+      // 添加响应拦截器
+      axios.interceptors.response.use(
+        function (response) {
+          // 对响应数据做点什么
+          // 消失loading
+          document.querySelector(".loading-box").style.display = "none";
+          return response;
+        },
+        function (error) {
+          // 对响应错误做点什么
+          return Promise.reject(error);
+        }
+      );
+
+      document.querySelector("#btn1").addEventListener("click", function () {
+        // 发送ajax请求
+        axios({
+          method: "get",
+          url: "https://autumnfish.cn/api/joke/list",
+          params: { num: 10 }, // get参数
+        }).then((res) => {
+          console.log(res);
+        });
+      });
+      document.querySelector("#btn2").addEventListener("click", function () {
+        // 发送ajax请求
+        axios({
+          method: "get",
+          url: "https://autumnfish.cn/fruitApi/fruits",
+        }).then((res) => {
+          console.log(res);
+        });
+      });
+      document.querySelector("#btn3").addEventListener("click", function () {
+        // 发送ajax请求
+        axios({
+          method: "post",
+          url: "http://www.liulongbin.top:3009/api/login",
+          data: {
+            username: "admin",
+            password: "123456",
+          },
+        }).then((res) => {
+          console.log(res);
+        });
+      });
+    </script>
+  </body>
+</html>

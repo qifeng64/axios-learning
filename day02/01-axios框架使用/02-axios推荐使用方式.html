@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+  </head>
+
+  <body>
+    <button class="btn1">get推荐写法</button>
+    <button class="btn2">post推荐写法</button>
+
+    <!-- 导入axios -->
+    <script src="./axios.js"></script>
+
+    <script>
+      /* 
+    1.axios基本使用
+      axios.get('url')
+          .then( res=>{ //请求成功 } )
+          .catch( err=>{ //请求失败 } )
+          .then( ()=>{ //请求完成. 无论成功还是失败 })
+
+    2. axios发送get请求
+      axios.get('url', { params:{key:value} } )
+          .then(res=>{ //请求完成} )
+
+    3. axios发送post请求
+      axios.post('url',{ key:value })
+          .then(res=>{ //请求完成} )
+
+    4. axios推荐用法
+      axios({
+        method:'请求方法',
+        url:'请求路径',
+        data:{ post参数 },
+        params :{ get参数 }
+      }).then( res=>{ //请求成功 })
+    */
+
+      //基本使用
+      document.querySelector(".btn1").addEventListener("click", function () {
+        axios({
+          method: "get",
+          url: "https://autumnfish.cn/api/joke/list?num=10",
+          params: { num: 10 }, // get参数  会拼接到URL上面去
+        }).then(({ data }) => {
+          console.log(data);
+        });
+      });
+
+      //点我发送post请求
+      document.querySelector(".btn2").addEventListener("click", function () {
+        axios({
+          method: "post",
+          url: "http://www.liulongbin.top:3009/api/login",
+          data: {
+            username: "1212",
+            password: "12121",
+          }, // post参数  会拼接到send上面去
+        }).then(({ data }) => {
+          console.log(data);
+        });
+      });
+    </script>
+  </body>
+</html>
