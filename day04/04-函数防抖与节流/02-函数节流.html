@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+    <style>
+      body {
+        width: 3000px;
+        height: 3000px;
+      }
+    </style>
+  </head>
+  <body>
+    <script>
+      /* 
+        1.函数节流 : 单位时间内，频繁触发一个事件， 只会触发一次
+        2.节流场景 : 降低高频事件触发频率 
+            * 鼠标移动：onmousemove
+            * 滚动条事件：onscroll
+        3.节流实现:
+            3.1 声明一个全局变量存储 当前触发时间                 let lastTime = null
+            3.2 每一次触发事件，获取本次触发时间                  let currentTime = Date.now()
+            3.3 判断 本次触发时间 - 上一次触发时间  >= 节流间隔   currentTime-lastTime>=500
+            3.4 如果超过触发间隔，则执行事件处理代码。 然后存储本次触发事件  lastTime = currentTime
+        */
+
+      // 1. 声明一个全局变量存储触发时间
+      let lastTime = null; // 保证第一次 超过节流间隔 直接触发
+      let i = 1;
+      window.onscroll = function () {
+        // 2. 获取现在的时间
+        let currentTime = Date.now();
+        // 3. 判断 本次触发时间 - 上一次触发时间  >= 节流间隔
+        if (currentTime - lastTime >= 500) {
+          console.log(`第${i++}次触发`);
+          lastTime = currentTime;
+        }
+      };
+    </script>
+  </body>
+</html>
