@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>欢迎来到水果世界</title>
+  </head>
+  <style>
+    * {
+      padding: 0;
+      margin: 0;
+      list-style: none;
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+    }
+
+    #box {
+      width: 100%;
+      height: 100%;
+      margin: 0 auto;
+      min-width: 650px;
+      overflow: hidden;
+    }
+
+    .content {
+      width: 100%;
+      border: 1px solid #00a383;
+      height: 100%;
+      overflow: hidden;
+      box-sizing: border-box;
+      display: flex;
+    }
+
+    .nav {
+      height: 40px;
+      padding-left: 15px;
+      line-height: 40px;
+      font-weight: bold;
+      color: #00a383;
+      border-bottom: 3px solid #00a383;
+    }
+
+    .list {
+      overflow: auto;
+      width: 200px;
+      margin-bottom: 40px;
+    }
+
+    .list img {
+      vertical-align: middle;
+    }
+
+    .item {
+      padding-left: 15px;
+      line-height: 30px;
+      cursor: pointer;
+      transition: all 0.5s;
+    }
+
+    .active,
+    .item:hover {
+      color: #fff;
+      background: #00a383 !important;
+    }
+
+    .item:nth-child(odd) {
+      background: rgba(0, 0, 0, 0.1);
+    }
+
+    .info {
+      display: inline-block;
+      flex: 1;
+      height: 100%;
+      color: #000;
+      text-align: center;
+    }
+
+    .info .story h5 {
+      margin-top: 10px;
+    }
+
+    .info .story p {
+      padding: 30px 50px;
+      text-align: left;
+      line-height: 30px;
+      font-weight: 500;
+      text-indent: 2em;
+    }
+
+    .name {
+      text-align: center;
+      line-height: 30px;
+      border-bottom: 1px solid #ccc;
+      font-weight: bold;
+      margin-top: 15px;
+    }
+
+    .img {
+      margin: 15px 0;
+      text-align: center;
+      max-height: 45%;
+      overflow: hidden;
+      /* 伸缩盒子实现图片居中 */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      vertical-align: middle;
+    }
+
+    .img > img {
+      width: 120px;
+      height: 120px;
+      object-fit: cover;
+    }
+
+    h5 {
+      font-size: 18px;
+    }
+
+    #loading {
+      position: absolute;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgb(22, 27, 31);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  </style>
+
+  <body>
+    <div id="box">
+      <div class="nav">
+        <span>水果列表</span>
+      </div>
+      <div class="content">
+        <!-- 水果列表 -->
+        <ul class="list"></ul>
+        <!-- 水果详情 -->
+        <div class="info"></div>
+      </div>
+    </div>
+    <div id="loading">
+      <img src="./loading.gif" alt="" />
+    </div>
+
+    <!-- 导入axios -->
+    <script src="./libs/axios.js"></script>
+    <script>
+      /*需求分析
+        1.页面一加载：发送ajax请求所有水果数据，显示到左侧列表
+        2.点击左侧列表,右侧盒子显示对应水果详细数据
+        3.默认加载第一个水果详细信息
+         */
+
+      //1.页面一加载：发送ajax请求所有水果数据，显示到左侧列表
+      // 发送ajax请求
+      axios({
+        method: "get",
+        url: "https://autumnfish.cn/fruitApi/fruits",
+      }).then((res) => {
+        console.log(res);
+
+        // 网速过快导致loading一闪而过，为了让用户看过loading动画，可以用定时器过一会渲染
+        setTimeout(() => {
+          // 1. 消失loading
+          document.querySelector("#loading").style.display = "none";
+          // 2. 渲染数据
+          document.querySelector(".list").innerHTML = res.data.data
+            .map(
+              // 自定义属性用于存储数据，保存在目标的 dataset 属性中 =>  用于通过ID获取水果详情
+              (item) => `<li class="item" data-id="${item.id}">
+                <span>${item.name}</span>
+                <img width="20px" src="${item.icon}" alt="">
+                </li>
+        `
+            )
+            .join("");
+          // 3. 默认渲染第一个（由于需要左侧栏先渲染完毕再渲染）因为点击事件会触发详情页的渲染
+          // 不是监听 而是直接执行该元素的click方法 而click方法会触发onclick事件（动作）
+          document.querySelector(".list li").click();
+        }, 1000);
+        // 2. 点击li元素：动态新增 需要注册委托事件
+        document.querySelector(".list").addEventListener("click", function (e) {
+          // if (e.target.dataset) { }// 不行，需要返回li元素
+          // 三元表达式 通过类名判断并返回li元素
+          let li = e.target.classList.contains("item")
+            ? e.target
+            : e.target.parentNode;
+          // console.log(li);
+          // 发送ajax请求
+          axios({
+            method: "get",
+            // id前无冒号
+            url: `https://autumnfish.cn/fruitApi/fruit/${li.dataset.id}`,
+          }).then((res) => {
+            console.log(res);
+            // 无数组 直接渲染即可
+            document.querySelector(".info").innerHTML = `<div class="bg">
+                <div class="name" style="color: red">水果名称:${res.data.data.name}</div>
+                <div class="img">
+                    <img src="${res.data.data.icon}" alt="" />
+                </div>
+                <p style="color: red">水果信息：${res.data.data.info}</p>
+                <div class="story">
+                    <h5>详细介绍：</h5>
+                    <p>${res.data.data.desc}</p>
+                </div>
+            </div>`;
+          });
+        });
+      });
+    </script>
+  </body>
+</html>
